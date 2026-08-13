@@ -88,6 +88,7 @@ module rvx_core #(
   wire [31:0] target_address_s1;
   wire        target_address_sel_s1;
   wire [31:0] trap_handler_address_s1;
+  wire        wfi_s1;
   wire [ 2:0] writeback_mux_sel_s1;
 
   // Pipeline stage 2 signals
@@ -252,7 +253,8 @@ module rvx_core #(
       .mret_s1                      (mret_s1),
       .store_s1                     (store_s1),
       .target_address_sel_s1        (target_address_sel_s1),
-      .writeback_mux_sel_s1         (writeback_mux_sel_s1)
+      .writeback_mux_sel_s1         (writeback_mux_sel_s1),
+      .wfi_s1                       (wfi_s1)
 
   );
 

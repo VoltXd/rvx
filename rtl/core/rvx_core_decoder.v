@@ -26,7 +26,8 @@ module rvx_core_decoder #(
     output wire       mret_s1,
     output wire       store_s1,
     output wire       target_address_sel_s1,
-    output reg  [2:0] writeback_mux_sel_s1
+    output reg  [2:0] writeback_mux_sel_s1,
+    output wire       wfi_s1
 
 );
 
@@ -119,6 +120,9 @@ module rvx_core_decoder #(
   assign mret_s1 = system_type & funct3 == `RISCV_FUNCT3_MRET & funct7 == `RISCV_FUNCT7_MRET &
       rs1_address == `RISCV_RS1_MRET & rs2_address == `RISCV_RS2_MRET & rd_address == `RISCV_RD_MRET;
 
+  assign wfi_s1 = system_type & funct3 == `RISCV_FUNCT3_WFI & funct7 == `RISCV_FUNCT7_WFI &
+      rs1_address == `RISCV_RS1_WFI & rs2_address == `RISCV_RS2_WFI & rd_address == `RISCV_RD_WFI;
+
   // Illegal instruction detection
   // ---------------------------------------------------------------------------
 
@@ -129,7 +133,7 @@ module rvx_core_decoder #(
   wire illegal_op =
       op_type & ~(add | sub | slt | sltu | is_and | is_or | is_xor | sll | srl | sra | mul | mulh | mulhsu | mulhu);
   wire illegal_op_imm = op_imm_type & ~(addi | slti | sltiu | andi | ori | xori | slli | srli | srai);
-  wire illegal_system = system_type & ~(csr_type | ecall_s1 | ebreak_s1 | mret_s1);
+  wire illegal_system = system_type & ~(csr_type | ecall_s1 | ebreak_s1 | mret_s1 | wfi_s1);
   wire unknown_type = ~(branch_type | jal_type | jalr_type | auipc_type | lui_type | load_type | store_type |
                         system_type | op_type | op_imm_type | misc_mem_type);
 
