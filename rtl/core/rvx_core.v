@@ -5,6 +5,7 @@
 
 module rvx_core #(
 
+    parameter ENABLE_E = 0,
     parameter ENABLE_ZMMUL = 0
 
 ) (
@@ -227,6 +228,7 @@ module rvx_core #(
 
   rvx_core_decoder #(
 
+      .ENABLE_E(ENABLE_E),
       .ENABLE_ZMMUL(ENABLE_ZMMUL)
 
   ) rvx_core_decoder_instance (
@@ -427,7 +429,11 @@ module rvx_core #(
   // Integer and CSR Register files
   // ---------------------------------------------------------------------------
 
-  rvx_core_integer_file rvx_core_integer_file_instance (
+  rvx_core_integer_file #(
+
+      .ENABLE_E(ENABLE_E)
+
+  ) rvx_core_integer_file_instance (
 
       // Global signals
       .clock       (clock),

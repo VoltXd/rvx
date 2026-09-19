@@ -4,7 +4,10 @@
 `include "rvx_constants.vh"
 
 module rvx_core_decoder #(
+
+    parameter ENABLE_E = 0,
     parameter ENABLE_ZMMUL = 0
+
 ) (
 
     input wire [31:0] instruction_s1,
@@ -122,6 +125,16 @@ module rvx_core_decoder #(
   // Illegal instruction detection
   // ---------------------------------------------------------------------------
 
+  wire illegal_rs1_addr = ENABLE_E ?
+      rs1_address[4] & (op_type | op_imm_type | load_type | jalr_type | store_type | branch_type | (csr_type && (funct3[2] == 1'b0))) :
+      1'b0;
+  wire illegal_rs2_addr = ENABLE_E ?
+      rs2_address[4] & (op_type | store_type | branch_type) :
+      1'b0;
+  wire illegal_rd_addr  = ENABLE_E ?
+      rd_address[4]  & (op_type | op_imm_type | load_type | jalr_type | lui_type | auipc_type | jal_type | csr_type) :
+      1'b0;
+
   wire illegal_store = store_type & (funct3[2] == 1'b1 || funct3[1:0] == 2'b11);
   wire illegal_load = load_type & (funct3 == 3'b011 || funct3 == 3'b110 || funct3 == 3'b111);
   wire illegal_jalr = jalr_type & funct3 != 3'b000;
@@ -134,7 +147,7 @@ module rvx_core_decoder #(
                         system_type | op_type | op_imm_type | misc_mem_type);
 
   assign illegal_instruction_s1 = unknown_type | illegal_store | illegal_load | illegal_jalr | illegal_branch |
-      illegal_op | illegal_op_imm | illegal_system;
+      illegal_op | illegal_op_imm | illegal_system | illegal_rs1_addr | illegal_rs2_addr | illegal_rd_addr;
 
   // Load and Store instructions decoding
   // ---------------------------------------------------------------------------
