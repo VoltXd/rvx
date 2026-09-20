@@ -1,4 +1,4 @@
-RV32_DIRS := $(wildcard rv32/*)
+RV32_DIRS := $(wildcard rv32i/*)
 RV32_TESTS := $(foreach dir,$(RV32_DIRS),$(wildcard $(dir)/*.S))
 RV32_TEST_NAMES := $(notdir $(RV32_TESTS:.S=))
 RV32_ELFS := $(addprefix test_programs/,$(addsuffix .elf,$(RV32_TEST_NAMES)))
@@ -26,7 +26,7 @@ test_programs: $(RV32_ELFS)
 
 signatures: $(RV32_SIGNATURES)
 
-test_programs/%.elf: rv32/*/%.S
+test_programs/%.elf: rv32i/*/%.S
 	mkdir -p test_programs
 	$(if $(findstring privilege,$<), \
 		@$(CC) $(CFLAGS) -DTARGET_SIMULATOR_RVX -Drvtest_mtrap_routine=True -Iinclude/ $< -o $@ -T rvx.ld, \
@@ -34,7 +34,7 @@ test_programs/%.elf: rv32/*/%.S
 	$(OBJCOPY) -O verilog --verilog-data-width=4 $@ $(@:.elf=.mem)
 	$(OBJDUMP) --source $@ > $(@:.elf=.disasm)
 
-signatures/%.signature: rv32/*/%.S
+signatures/%.signature: rv32i/*/%.S
 	mkdir -p signatures
 	$(if $(findstring privilege,$<), \
 		@$(CC) $(CFLAGS) -DTARGET_SIMULATOR_SPIKE -Drvtest_mtrap_routine=True -Iinclude/ $< -o signatures/$*.elf -T spike.ld, \
