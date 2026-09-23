@@ -12,6 +12,9 @@ module rvx #(
     // Number of GPIO pins
     parameter GPIO_PIN_COUNT = 1,
 
+    // Enable/disable the E ISA
+    parameter ENABLE_E = 0,
+
     // Enable/disable the ZMMUL extension
     parameter ENABLE_ZMMUL = 0
 
@@ -136,6 +139,7 @@ module rvx #(
 
   rvx_core #(
 
+      .ENABLE_E(ENABLE_E),
       .ENABLE_ZMMUL(ENABLE_ZMMUL)
 
   ) rvx_core_instance (
@@ -256,7 +260,11 @@ module rvx #(
 
   );
 
-  rvx_bootloader_rom rvx_bootloader_rom_instance (
+  rvx_bootloader_rom #(
+
+      .ENABLE_E(ENABLE_E)
+
+  ) rvx_bootloader_rom_instance (
 
       // Global signals
       .clock  (clock),
